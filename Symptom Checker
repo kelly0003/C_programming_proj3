@@ -1,0 +1,161 @@
+#include <iostream>
+#include <vector>
+#include <ctime>
+#include <cstdlib>
+#include <iomanip>
+
+using namespace std;
+
+// Base class for Illnesses
+class Illness {
+protected:
+    vector<string> symptoms;  // Symptoms for the illness
+public:
+    virtual bool checkIllness(const vector<string>& patientSymptoms) = 0; 
+};
+
+// Derived class for COVID-19
+class COVID19 : public Illness {
+public:
+    COVID19() {
+        symptoms = {"present", "present", "present", "absent", "present", "absent", "present"};
+    }
+    bool checkIllness(const vector<string>& patientSymptoms) override {
+        return (patientSymptoms[0] == symptoms[0] &&  // Fever
+                patientSymptoms[1] == symptoms[1] &&  // Cough
+                patientSymptoms[2] == symptoms[2] &&  // Shortness of Breath
+                patientSymptoms[3] == symptoms[3] &&  // Runny Nose
+                patientSymptoms[4] == symptoms[4] &&  // Headaches
+                patientSymptoms[5] == symptoms[5] &&  // Sneezing
+                patientSymptoms[6] == symptoms[6]);   // Fatigue
+    }
+};
+
+// Derived class for Cold
+class Cold : public Illness {
+public:
+    Cold() {
+        symptoms = {"absent", "present", "absent", "present", "present", "present", "present"};
+    }
+    bool checkIllness(const vector<string>& patientSymptoms) override {
+        return (patientSymptoms[0] == symptoms[0] &&  // Fever
+                patientSymptoms[1] == symptoms[1] &&  // Cough
+                patientSymptoms[2] == symptoms[2] &&  // Shortness of Breath
+                patientSymptoms[3] == symptoms[3] &&  // Runny Nose
+                patientSymptoms[4] == symptoms[4] &&  // Headaches
+                patientSymptoms[5] == symptoms[5] &&  // Sneezing
+                patientSymptoms[6] == symptoms[6]);   // Fatigue
+    }
+};
+
+// Derived class for Flu
+class Flu : public Illness {
+public:
+    Flu() {
+        symptoms = {"present", "present", "absent", "present", "present", "absent", "present"};
+    }
+    bool checkIllness(const vector<string>& patientSymptoms) override {
+        return (patientSymptoms[0] == symptoms[0] &&  // Fever
+                patientSymptoms[1] == symptoms[1] &&  // Cough
+                patientSymptoms[2] == symptoms[2] &&  // Shortness of Breath
+                patientSymptoms[3] == symptoms[3] &&  // Runny Nose
+                patientSymptoms[4] == symptoms[4] &&  // Headaches
+                patientSymptoms[5] == symptoms[5] &&  // Sneezing
+                patientSymptoms[6] == symptoms[6]);   // Fatigue
+    }
+};
+
+// Function to randomly generate symptoms for a patient
+vector<string> generateSymptoms() {
+    vector<string> symptoms = {"absent", "present"};
+    vector<string> patientSymptoms;
+    for (int i = 0; i < 7; ++i) {
+        patientSymptoms.push_back(symptoms[rand() % 2]);
+    }
+    return patientSymptoms;
+}
+
+// Function to print the Symptoms Table
+void printSymptomsTable() {
+    cout << "\n==============================================================\n";
+    cout << "Symptoms        | COVID-19 | Cold    | Flu     |\n";
+    cout << "==============================================================\n";
+    cout << "Fever           | *        | +       | *       |\n";
+    cout << "Cough           | *        | +       | *       |\n";
+    cout << "Shortness of Breath | *    | -       | -       |\n";
+    cout << "Runny Nose      | +        | *       | +       |\n";
+    cout << "Headaches       | +        | +       | *       |\n";
+    cout << "Sneezing        | -        | *       | -       |\n";
+    cout << "Fatigue         | +        | +       | *       |\n";
+    cout << "==============================================================\n";
+}
+
+int main() {
+    srand(time(0));  // Random number generation
+
+    // Create illness objects
+    COVID19 covid;
+    Cold cold;
+    Flu flu;
+
+    // Display Welcome Message and Guide
+    cout << "Welcome to Symptoms Checker\n";
+    cout << "Guide: * Common + Sometimes/Rarely - NO\n";
+    printSymptomsTable();
+
+    // Input: Number of patients
+    int numPatients;
+    cout << "\nEnter the number of patients? ";
+    cin >> numPatients;
+    cout << "Thank you...\n";
+
+    // Track the number of patients for each illness
+    int covidCount = 0, coldCount = 0, fluCount = 0, otherCount = 0;
+
+    // Simulate checking symptoms for each patient
+    cout << "\n========================================\n";
+    cout << "Symptoms Checker....\n";
+    for (int i = 0; i < numPatients; ++i) {
+        vector<string> patientSymptoms = generateSymptoms();
+        
+        // Check for COVID-19, Cold, Flu, or Other
+        if (covid.checkIllness(patientSymptoms)) {
+            covidCount++;
+        } else if (cold.checkIllness(patientSymptoms)) {
+            coldCount++;
+        } else if (flu.checkIllness(patientSymptoms)) {
+            fluCount++;
+        } else {
+            otherCount++;
+        }
+    }
+
+    // Print the final report
+    cout << "\n========================================\n";
+    cout << covidCount << " patients have symptoms of COVID-19\n";
+    cout << coldCount << " patients have symptoms of Cold\n";
+    cout << fluCount << " patients have symptoms of Flu\n";
+    cout << otherCount << " patients may have some other illness\n";
+
+    // Calculate and print percentages
+    cout << "\nPercentage of each illness:\n";
+    cout << "COVID-19: [" << fixed << setprecision(0) << (double)covidCount / numPatients * 100 << "%] ";
+    for (int i = 0; i < (covidCount * 100) / numPatients; ++i) {
+        cout << "+";
+    }
+    cout << "\nCold: [" << (double)coldCount / numPatients * 100 << "%] ";
+    for (int i = 0; i < (coldCount * 100) / numPatients; ++i) {
+        cout << "+";
+    }
+    cout << "\nFlu: [" << (double)fluCount / numPatients * 100 << "%] ";
+    for (int i = 0; i < (fluCount * 100) / numPatients; ++i) {
+        cout << "+";
+    }
+    cout << "\nOther illness: [" << (double)otherCount / numPatients * 100 << "%] ";
+    for (int i = 0; i < (otherCount * 100) / numPatients; ++i) {
+        cout << "+";
+    }
+    cout << "\n========================================\n";
+
+    return 0;
+}
